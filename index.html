@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flower Classification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f2f2f2;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        input[type="file"] {
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            text-align: center;
+            margin-top: 20px;
+        }
+        #uploaded-image {
+        
+            max-width: 100%;
+            margin-top: 20px;
+            display: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Flower Classification</h1>
+        <form id="upload-form" action="http://127.0.0.1:8000/classify_image/" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" accept="image/*" id="upload-file">
+            <button type="submit">Upload</button>
+        </form>
+        <div id="result"></div>
+        <center><img id="uploaded-image" src=""></center>
+    </div>
+
+    <script>
+        document.getElementById('upload-file').addEventListener('change', async (event) => {
+            const file = event.target.files[0];
+            const uploadedImage = document.getElementById('uploaded-image');
+            uploadedImage.src = URL.createObjectURL(file);
+            uploadedImage.style.display = 'block';
+        });
+
+        document.getElementById('upload-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData();
+            formData.append('file', event.target.file.files[0]);
+
+            const response = await fetch(event.target.action, {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+            document.getElementById('result').innerText = data.result;
+        });
+    </script>
+</body>
+</html>
